@@ -1,0 +1,13 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+  build:
+    commands:
+      - echo "Linting..."
+      - python -m py_compile lambda/app.py
+artifacts:
+  files:
+    - template.yaml
+    - lambda/app.py
