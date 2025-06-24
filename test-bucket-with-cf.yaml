@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Test bucket using Cloud Formation
+
+Parameters:
+  BucketName:
+    Type: String
+    Default: test-bucket-with-cf
+  AccessLogBucket:
+    Type: String
+    Default: test-logging-bucket
+  KmsKeyArn:
+    Type: String
+    Default: <ARN amazon resource name/number>
+
+Resources:
+
+  MainBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+
+      ## Setup encryption - KMS Key
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: !Ref KmsKeyArn
+
+      ## Enable versioning
+      VersioningConfiguration:
+        Status: Enabled
+
+      ## Block public access
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+      ## Setup Log bucket
+      LoggingConfiguration:
+        DestinationBucketName: !Ref AccessLogBucket
+
+Outputs:
+  MainBucketName:
+    Description: Name of the main bucket
+    Value: !Ref MainBucket
